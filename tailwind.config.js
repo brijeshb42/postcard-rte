@@ -21,12 +21,17 @@ module.exports = {
         modoGray: {
           DEFAULT: '#aab2bb',
         },
+        modoGreen: {
+          DEFAULT: '#2AC45D',
+        },
         blueGray: colors.blueGray
       },
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      opacity: ['disabled'],
+    }
   },
   plugins: [],
 }

@@ -23,10 +23,12 @@ export interface ISidebarOptions {
 export interface ISidebarProps {
   options: ISidebarOptions;
   setOption(key: keyof ISidebarOptions, value: any): void;
+  isSaving: boolean;
+  onSave(): void;
 }
 
 export default function SideBar(props: ISidebarProps) {
-  const { options, setOption } = props;
+  const { options, setOption, isSaving, onSave } = props;
 
   function onFontChange(opt: IOptionType | null) {
     if (!opt) {
@@ -66,6 +68,15 @@ export default function SideBar(props: ISidebarProps) {
           setOption('align', newVal === options.align ? undefined : newVal)
         }
       />
+      <div className="mt-2.5">
+        <button
+          className="block w-full py-2.5 bg-modoGreen text-white text-center disabled:opacity-50"
+          disabled={isSaving}
+          onClick={onSave}
+        >
+          {isSaving ? 'Saving' : 'Save'} Changes
+        </button>
+      </div>
     </div>
   );
 }

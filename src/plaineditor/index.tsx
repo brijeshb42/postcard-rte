@@ -27,6 +27,7 @@ export default function PlainEditor(props: Props) {
 
   return (
     <TextArea
+      autoFocus
       className={className}
       placeholder="Write your text here..."
       value={props.text}

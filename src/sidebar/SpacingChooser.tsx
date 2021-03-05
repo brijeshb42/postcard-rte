@@ -61,7 +61,7 @@ export default function SpacingChooser(props: Props) {
             placeholder="..."
             type="number"
             className="block w-full h-full outline-none text-center text-xs focus:border focus:border-modo"
-            value={props.letterSpacing}
+            value={props.letterSpacing || ''}
             step="0.1"
             onChange={ev => {
               const { value } = ev.target;

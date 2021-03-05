@@ -8,6 +8,17 @@ import { INITIAL_FONTS } from './constants';
 
 const root = document.getElementById('root');
 
+function render() {
+  ReactDOM.render(
+    <React.StrictMode>
+      <Router>
+        <AppWithRouter />
+      </Router>
+    </React.StrictMode>,
+    document.getElementById('root')
+  );
+}
+
 WebFont.load({
   google: {
     families: INITIAL_FONTS,
@@ -17,14 +28,7 @@ WebFont.load({
   },
   active() {
     root!.innerText = '';
-    ReactDOM.render(
-      <React.StrictMode>
-        <Router>
-          <AppWithRouter />
-        </Router>
-      </React.StrictMode>,
-      document.getElementById('root')
-    );
+    render();
   }
 });
 
