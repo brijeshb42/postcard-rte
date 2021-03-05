@@ -50,6 +50,7 @@ export default function SideBar(props: ISidebarProps) {
         onChange={onFontChange}
       />
       <FontSizeChooser
+        fontFamily={options.fontFamily}
         weight={options.fontWeight}
         size={options.fontSize}
         onChange={onFontDimensionChange}

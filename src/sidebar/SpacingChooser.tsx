@@ -3,7 +3,7 @@ import Select from 'react-select';
 
 import { IOptionType, Option, SingleValueSpacing, DropdownIndicatorSpacing} from './customSelect';
 
-export type LineHeight = 75 | 100 | 125 | 150 | 175 | 200;
+export type LineHeight = '75' | '100' | '125' | '150' | '175' | '200';
 export type LetterSpacing = number | undefined;
 
 export type SpacingChange = (key: 'lineHeight' | 'letterSpacing', value: LineHeight | LetterSpacing) => void;
@@ -15,8 +15,8 @@ interface Props {
 }
 
 const LINE_HEIGHT_OPTIONS: IOptionType[] = [75, 100, 125, 150, 175, 200].map(l => ({
-  label: l,
-  value: l,
+  label: l.toString(),
+  value: l.toString(),
 }));
 
 export default function SpacingChooser(props: Props) {

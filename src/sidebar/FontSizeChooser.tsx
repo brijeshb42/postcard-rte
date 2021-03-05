@@ -2,25 +2,64 @@ import * as React from 'react';
 import Select from 'react-select';
 
 import { IOptionType, DropdownNoBorder, Option, SingleValue } from './customSelect';
+import { getVariantsForFont } from '../api';
+import { loadFontWithVariants } from '../fontStore';
 
-export type FontWeight = number | undefined;
+export type FontWeight = string;
+
 export type FontSizeChange = (key: 'weight' | 'size', value: FontWeight) => void;
 
-const FONT_WEIGHTS: IOptionType[] = [300, 400, 500, 600, 700].map(weight => ({
-  label: weight === 500 ? 'Bold' : weight,
-  value: weight,
-}));
+export default function FontSizeChooser(props: { weight: FontWeight; size: number; onChange: FontSizeChange, fontFamily: string }) {
+  const [options, setOptions] = React.useState<IOptionType[]>([{
+    label: props.weight,
+    value: props.weight as string,
+  }]);
+  const value = React.useMemo<IOptionType>(() => ({
+    label: props.weight,
+    value: props.weight as string,
+  }), [props.weight]);
 
-export default function FontSizeChooser(props: { weight: FontWeight; size: number; onChange: FontSizeChange }) {
-  const value = React.useMemo(() => FONT_WEIGHTS.find(f => f.value === props.weight), [props.weight]);
+  React.useEffect(() => {
+    if (options.length <= 1) {
+      return;
+    }
+
+    loadFontWithVariants(props.fontFamily, options.map(item => item.value));
+  }, [props.fontFamily, options]);
+
+  React.useEffect(() => {
+    let mounted = true;
+
+    getVariantsForFont(props.fontFamily)
+    .then((resp: {result: {[key: string]: string}}) => {
+      if (!mounted) {
+        return;
+      }
+
+      const result = Object.values(resp.result);
+      setOptions(result.map(item => ({
+        label: item[0].toUpperCase() + item.substr(1),
+        value: item,
+      })));
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [props.fontFamily]);
+
+  React.useEffect(() => {
+
+  }, [options]);
+
   return (
     <div className="flex mt-2.5 w-full border boder-blueGray-200 rounded">
       <Select
         aria-label="Select font variant"
-        className="w-2/3 rselect rselect__font-weight"
+        className="w-2/3 rselect rselect__font-weight rselect--floating"
         classNamePrefix="rselect"
         value={value}
-        options={FONT_WEIGHTS}
+        options={options}
         components={{
           DropdownIndicator: DropdownNoBorder,
           IndicatorSeparator: null,
@@ -31,7 +70,8 @@ export default function FontSizeChooser(props: { weight: FontWeight; size: numbe
           if (!opt) {
             return;
           }
-          props.onChange('weight', opt.value as number)
+
+          props.onChange('weight', opt.value as FontWeight)
         }}
       />
       <div className="w-1/3 border-l">
@@ -49,7 +89,7 @@ export default function FontSizeChooser(props: { weight: FontWeight; size: numbe
             onChange={ev => {
               const { value } = ev.target;
               if (/\d+/g.exec(value)) {
-                props.onChange('size', parseInt(ev.target.value, 10))
+                props.onChange('size', ev.target.value as FontWeight); // @TODO - this is not desired
               }
             }}
           />

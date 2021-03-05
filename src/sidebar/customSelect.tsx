@@ -1,10 +1,34 @@
 import * as React from 'react';
-import { OptionProps, SingleValueProps } from 'react-select';
+import * as ReactDOM from 'react-dom';
+import { OptionProps, SingleValueProps, MenuProps, InputProps, CommonProps } from 'react-select';
+
+import { loadFont } from '../fontStore';
 
 export interface IOptionType {
-  label: string | number;
-  value: string | number;
+  label: string;
+  value: string;
 }
+
+function cleanCommonProps(props: any): any {
+  //className
+  const {
+    className, // not listed in commonProps documentation, needs to be removed to allow Emotion to generate classNames
+    clearValue,
+    cx,
+    getStyles,
+    getValue,
+    hasValue,
+    isMulti,
+    isRtl,
+    options, // not listed in commonProps documentation
+    selectOption,
+    selectProps,
+    setValue,
+    theme, // not listed in commonProps documentation
+    ...innerProps
+  } = props;
+  return { ...innerProps };
+};
 
 export function DropdownIndicator({ hasBorder }: { hasBorder: boolean }) {
   const className = `p-1.5 mr-2${hasBorder ? ' border rounded' : ''}`;
@@ -31,8 +55,16 @@ export function OptionFontFamily(props: OptionProps<IOptionType, false>) {
     isSelected,
     label,
     innerProps,
+    options,
   } = props;
   const className = `rselect__option ${isSelected ? 'rselect__option--is-selected' : (isFocused ? 'rselect__option--is-focused' : '')}`;
+
+  React.useEffect(() => {
+    // minor optimization
+    if (options.length <= 20) {
+      loadFont(label);
+    }
+  }, [label, options.length]);
 
   return (
     <div className={className} style={{ fontFamily: label }} {...innerProps}>
@@ -60,6 +92,10 @@ export function Option(props: OptionProps<IOptionType, false>) {
 export function SingleValueFontFamily(props: SingleValueProps<IOptionType>) {
   const { children, data } = props;
 
+  React.useEffect(() => {
+    loadFont(data.label as string);
+  }, [data.label]);
+
   return (
     <div className="rselect__value-container text-xs" style={{ fontFamily: data.label as string }}>
       {children}
@@ -72,7 +108,7 @@ export function SingleValue(props: SingleValueProps<IOptionType>) {
 
   return (
     <div className="rselect__value-container text-xs">
-      {children}
+      {data.value}
     </div>
   );
 }
@@ -98,3 +134,71 @@ export function DropdownIndicatorSpacing() {
     </span>
   );
 }
+
+export function Menu(props: MenuProps<IOptionType, false>) {
+  const { children, className, cx, getStyles, innerRef, innerProps } = props;
+
+  return (
+    <div
+      style={getStyles('menu', props)}
+      className={cx({ menu: true }, className)}
+      ref={innerRef}
+      {...innerProps}
+    >
+      <div id="font-search-portal" className="font-firasans" />
+      {children}
+    </div>
+  );
+};
+
+function SpecialPortal(props: { menuIsOpen: boolean, id: string, children: React.ReactNode }) {
+  const { menuIsOpen, id } = props;
+  const domRef = React.useRef(document.createElement('div'));
+
+  React.useEffect(() => {
+    if (id && menuIsOpen) {
+      const dom = document.getElementById(id);
+
+      if (dom) {
+        dom.appendChild(domRef.current);
+        const inp = dom.querySelector('input');
+        inp?.focus();
+
+        return () => {
+          dom.removeChild(domRef.current);
+        };
+      }
+    }
+  }, [id, menuIsOpen]);
+
+  return ReactDOM.createPortal(props.children, domRef.current);
+}
+
+// type IProps = CommonProps<IOptionType, false> & InputProps;
+
+export function FontSearchInput(props: InputProps & { selectProps: { menuIsOpen: boolean }}) {
+  const { className, cx, getStyles, selectProps } = props;
+  const { innerRef, isDisabled, isHidden, ...innerProps } = cleanCommonProps(props);
+  const inputClass = selectProps.menuIsOpen ? 'block w-full py-2 px-4 focus:outline-none border-b border-gray-300 rounded-0' : 'inline p-0 border-0 opacity-0 w-0.5';
+
+  const innerEl = (
+    <input
+      ref={innerRef}
+      disabled={isDisabled}
+      placeholder="Search"
+      {...innerProps}
+      className={inputClass}
+    />
+  );
+
+  if (!selectProps.menuIsOpen) {
+    return innerEl;
+  }
+
+  return (
+    <SpecialPortal menuIsOpen={selectProps.menuIsOpen} id="font-search-portal">
+      {innerEl}
+    </SpecialPortal>
+  );
+}
+

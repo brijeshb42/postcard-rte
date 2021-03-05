@@ -11,18 +11,20 @@ interface Props {
 
 export default function PlainEditor(props: Props) {
   const { options } = props;
-  const className = 'block h-full w-full focus:outline-none';
+  const className = 'block h-full w-full resize-none focus:outline-none';
   const style = React.useMemo(() => {
     const letterSpacing = options.letterSpacing || 'initial';
+    const fontWeight = typeof options.fontWeight === 'string' ? options.fontWeight : 'initial';
+
     return {
-      fontSize: options.fontSize,
-      fontWeight: options.fontWeight,
+      fontSize: `${options.fontSize}px`,
+      fontWeight,
       fontFamily: options.fontFamily,
       lineHeight: `${options.lineHeight}%`,
       letterSpacing,
       textAlign: options.align,
       color: options.textColor,
-    };
+    } as React.CSSProperties;
   }, [options]);
 
   return (

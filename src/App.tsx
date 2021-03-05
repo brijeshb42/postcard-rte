@@ -11,9 +11,9 @@ function getDefaultOptions(): ISidebarOptions {
   return {
     fontFamily: 'Inter',
     fontSize: 16,
-    fontWeight: 400,
+    fontWeight: '400',
     textColor: '#000000',
-    lineHeight: 125,
+    lineHeight: '125',
     letterSpacing: undefined,
     align: 'left',
   };
@@ -30,10 +30,18 @@ function App() {
   const { id } = params;
 
   function setOption(key: keyof ISidebarOptions, newValue: any) {
-    setOpts(oldOpts => ({
-      ...oldOpts,
-      [key]: newValue,
-    }));
+    setOpts(oldOpts => {
+      // reset weight when font changes as it might not support
+      // that particular weight.
+      const resetWeight = key === 'fontFamily';
+      const extraObj = resetWeight ? { 'fontWeight': '400' } : {};
+
+      return {
+        ...oldOpts,
+        ...extraObj,
+        [key]: newValue,
+      };
+    });
   }
 
   function saveText() {
@@ -62,6 +70,7 @@ function App() {
   }
 
   React.useEffect(() => {
+    // fetch new data when id changes
     if (!id) {
       if (text) {
         setText('');
@@ -89,6 +98,7 @@ function App() {
   }, [id]);
 
   React.useEffect(() => {
+    // key handler to save data on CMD+S press
     if (isMacRef.current === null) {
       isMacRef.current = /Mac/g.test(window.navigator.userAgent);
     }

@@ -15,20 +15,18 @@
   @apply border-modo !important;
 }
 
-/* .rselect__font-weight .rselect__control:focus-within { */
-/*   @apply border-2 border-modo !important; */
-/* } */
-
 .rselect--floating .rselect__menu {
   @apply top-0 m-0 bg-white !important;
   left: -105%;
 }
 
-.rselect__menu-list {
-  max-height: initial !important;
-  @apply py-0 !important;
-  @apply shadow-none !important;
+.rselect__menu {
   @apply rounded-sm border-2 border-modo;
+  @apply shadow-none !important;
+}
+
+.rselect__menu-list {
+  @apply py-0 !important;
 }
 
 .rselect__option {
