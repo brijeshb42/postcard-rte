@@ -7,12 +7,12 @@
 4. Setup php backend
   1. Make sure php and composer are installed on the system `brew install php composer` for mac.
 
-    ```
-      PHP >= 7.3
-      OpenSSL PHP Extension
-      PDO PHP Extension
-      Mbstring PHP Extension
-    ```
+      ```
+        PHP >= 7.3
+        OpenSSL PHP Extension
+        PDO PHP Extension
+        Mbstring PHP Extension
+      ```
 5. `cd postcard-api`
 6. Install php dependencies - `composer install`
 7. Create sqlite file - `touch database/database.sqlite`
@@ -41,13 +41,12 @@
 10. `cp .env.example .env` and update the values for production env.
 10. `sudo apt install php7.4-cli`
 11. `sudo apt install php-mbstring php-xml`
-12.
-  ```
-  php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-  php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-  php composer-setup.php
-  php -r "unlink('composer-setup.php');"
-  ```
+12.  ```
+      php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+      php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+      php composer-setup.php
+      php -r "unlink('composer-setup.php');"
+      ```
 13. `php composer.phar update`
 14. `php composer.phar install`
 15. `sudo apt-get install php7.4-sqlite3`
@@ -60,4 +59,3 @@
 23. `sudo apt install certbot python3-certbot-nginx`
 24. `sudo certbot --register-unsafely-without-email --nginx -d postcard-mini.bitwiser.in`
 25. `/etc/init.d/nginx restart`
-
