@@ -1,0 +1,44 @@
+.rselect__control {
+  @apply border border-blueGray-200 shadow-none !important;
+}
+
+.rselect__control--is-focused {
+  font-size: 13px !important;
+  @apply border-2 border-modo !important;
+}
+
+.rselect__font-weight .rselect__control {
+  @apply border-2 border-transparent !important;
+}
+
+.rselect__font-weight .rselect__control:focus-within {
+  @apply border-modo !important;
+}
+
+/* .rselect__font-weight .rselect__control:focus-within { */
+/*   @apply border-2 border-modo !important; */
+/* } */
+
+.rselect--floating .rselect__menu {
+  @apply top-0 m-0 bg-white !important;
+  left: -105%;
+}
+
+.rselect__menu-list {
+  max-height: initial !important;
+  @apply py-0 !important;
+  @apply shadow-none !important;
+  @apply rounded-sm border-2 border-modo;
+}
+
+.rselect__option {
+  @apply py-1 px-4 text-sm;
+}
+
+.rselect__option--is-selected {
+  @apply bg-modo text-white;
+}
+
+.rselect__option--is-focused {
+  @apply bg-blue-100;
+}
