@@ -54,4 +54,6 @@
 17. `sudo apt-get install nginx php-fpm`
 18. `sudo ln -s ``pwd``/server.conf /etc/nginx/sites-enabled/server.conf`
 19. `/etc/init.d/nginx restart`
+20. `sudo apt install certbot python3-certbot-nginx`
+21. `sudo certbot --register-unsafely-without-email --nginx -d postcard-mini.bitwiser.in`
 
