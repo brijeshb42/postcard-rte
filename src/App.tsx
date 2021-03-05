@@ -37,6 +37,10 @@ function App() {
   }
 
   function saveText() {
+    if (!text) {
+      return;
+    }
+
     setSaving(true);
 
     const data = {

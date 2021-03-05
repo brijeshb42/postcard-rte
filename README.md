@@ -28,6 +28,7 @@
 3. You can now visit `http://localhost:8000` to access the production built UI.
 
 ## Production (steps taken on digitalocean)
+
 1. `git clone https://github.com/brijeshb42/postcard-mini.git`
 2. `cd postcard-mini`
 3. `sudo apt update`
@@ -50,10 +51,13 @@
 13. `php composer.phar update`
 14. `php composer.phar install`
 15. `sudo apt-get install php7.4-sqlite3`
-16. `php artisan migrate`
-17. `sudo apt-get install nginx php-fpm`
-18. `sudo ln -s ``pwd``/server.conf /etc/nginx/sites-enabled/server.conf`
-19. `/etc/init.d/nginx restart`
-20. `sudo apt install certbot python3-certbot-nginx`
-21. `sudo certbot --register-unsafely-without-email --nginx -d postcard-mini.bitwiser.in`
+17. `chmod -R 777 database`
+18. `chmod -R 777 logs`
+19. `sudo -H -u www-data touch database/database.sqlite`
+20. `php artisan migrate`
+21. `sudo apt-get install nginx php-fpm`
+22. `sudo ln -s ``pwd``/server.conf /etc/nginx/sites-enabled/server.conf`
+23. `sudo apt install certbot python3-certbot-nginx`
+24. `sudo certbot --register-unsafely-without-email --nginx -d postcard-mini.bitwiser.in`
+25. `/etc/init.d/nginx restart`
 
