@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* purgecss start ignore */
+.Toastify__toast--success {
+  @apply bg-modoGreen !important;
+}
+/* purgecss end ignore */

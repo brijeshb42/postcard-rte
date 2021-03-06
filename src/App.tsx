@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { useParams, useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import PlainEditor from './plaineditor';
 import SideBar, { ISidebarOptions } from './sidebar/SideBar';
@@ -58,13 +59,16 @@ function App() {
 
     saveTextApi(data, id)
       .then(resp => {
+        let message = 'Text updated.';
         if (resp.id) {
           history.replace(`/text/${resp.id}`);
+          message = `New text created: Copy the link from browser address bar. ^`;
         }
+        toast.success(message);
       })
       .catch(err => {
         console.error(err);
-        alert('Error while trying to save');
+        toast.error('Error while trying to save');
       })
       .finally(() => setSaving(false));
   }
@@ -90,10 +94,11 @@ function App() {
       const errCode = Number.parseInt(e.message);
       if (!Number.isNaN(errCode)) {
         history.replace('/');
+        toast.error('This text does not exist.');
         return;
       }
 
-      alert('Error while fetching text.');
+      toast.error('Error while fetching text.');
     });
   }, [id]);
 
