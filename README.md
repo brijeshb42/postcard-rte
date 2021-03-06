@@ -16,6 +16,7 @@
 5. `cd postcard-api`
 6. Install php dependencies - `composer install`
 7. Create sqlite file - `touch database/database.sqlite`
+8. Create `env` file - `cp .env.example .env`
 9. Update the contents of `.env` file with
     ```
     APP_NAME=Lumen
