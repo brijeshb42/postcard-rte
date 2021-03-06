@@ -47,6 +47,7 @@ function App() {
 
   function saveText() {
     if (!text) {
+      toast.info('Please add some text to save.');
       return;
     }
 
