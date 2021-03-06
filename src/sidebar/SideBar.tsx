@@ -55,7 +55,10 @@ export default function SideBar(props: ISidebarProps) {
         size={options.fontSize}
         onChange={onFontDimensionChange}
       />
-      <ColorChooser />
+      <ColorChooser
+        color={options.textColor}
+        onChange={setOption}
+      />
       <SpacingChooser
         lineHeight={options.lineHeight}
         letterSpacing={options.letterSpacing}
