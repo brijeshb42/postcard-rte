@@ -16,11 +16,31 @@
 5. `cd postcard-api`
 6. Install php dependencies - `composer install`
 7. Create sqlite file - `touch database/database.sqlite`
-8. Create tables - `php artisan migrate`.
-9. Run `yarn dev` in the project root folder to start frontend dev server.
-10. Run php server, `cd postcard-api` and `php -S localhost:8000 -t public`
-11. You can now visit `http://localhost:3000` to access the UI while in dev
+9. Update the contents of `.env` file with
+    ```
+    APP_NAME=Lumen
+    APP_ENV=local
+    APP_KEY=
+    APP_DEBUG=true
+    APP_URL=http://localhost
+    APP_TIMEZONE=UTC
+    # obtain google font api key from https://developers.google.com/fonts/docs/developer_api#APIKey
+    FONT_KEY=google-font-api-key
+
+    LOG_CHANNEL=stack
+    LOG_SLACK_WEBHOOK_URL=
+
+    DB_CONNECTION=sqlite
+
+    CACHE_DRIVER=database
+    QUEUE_CONNECTION=sync
+    ```
+10. Create tables - `php artisan migrate`.
+11. Run `yarn dev` in the project root folder to start frontend dev server.
+12. Run php server, `cd postcard-api` and `php -S localhost:8000 -t public`
+13. You can now visit `http://localhost:3000` to access the UI while in dev
     mode.
+
 
 ## Local build step
 1. Run `yarn build` in project root.
