@@ -2,12 +2,15 @@
   "name": "postcard-test",
   "version": "0.0.1",
   "scripts": {
-    "dev": "NODE_ENV=development vite",
-    "build": "NODE_ENV=production tsc && NODE_ENV=production vite build",
-    "serve": "vite preview"
+    "cp-quill": "cp node_modules/@types/quill/index.d.ts node_modules/@types/quill/core.d.ts",
+    "dev": "yarn cp-quill && NODE_ENV=development vite",
+    "build": "yarn cp-quill && NODE_ENV=production tsc && NODE_ENV=production vite build",
+    "serve": "yarn cp-quill && vite preview"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
+    "parchment": "1.1.4",
+    "quill": "^1.3.7",
     "react": "^17.0.0",
     "react-autosize-textarea": "^7.1.0",
     "react-color": "^2.19.3",
@@ -20,6 +23,7 @@
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.6",
     "@types/node": "^14.14.31",
+    "@types/quill": "^2.0.5",
     "@types/react": "^17.0.0",
     "@types/react-color": "^3.0.4",
     "@types/react-dom": "^17.0.0",

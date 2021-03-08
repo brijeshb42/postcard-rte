@@ -4,14 +4,15 @@ import { SketchPicker } from 'react-color';
 import { DropdownNoBorder } from './customSelect';
 
 interface Props {
-  color: string;
+  disabled: boolean;
+  color?: string;
   onChange(key: 'textColor', newValue: string): void;
 }
 
 export default function ColorChooser(props: Props) {
   const [showPicker, setShowPicker] = React.useState(false);
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
-  const { color, onChange } = props;
+  const { color, onChange, disabled } = props;
 
   React.useEffect(() => {
     function handlerOutClick(ev: MouseEvent) {
@@ -38,9 +39,10 @@ export default function ColorChooser(props: Props) {
   return (
     <div ref={wrapperRef} className="mt-2.5">
       <button
-        className="block flex items-center w-full text-xs text-center border rounded focus:outline-none focus:border-modo"
+        className="block flex items-center w-full text-xs text-center border rounded focus:outline-none focus:border-modo disabled:opacity-50"
         onClick={() => setShowPicker(v => !v)}
         aria-label={`Pick text color (Current -> ${color})`}
+        disabled={disabled}
       >
         <div className="flex w-10/12 pl-2 py-2">
           {color ? (
@@ -56,7 +58,10 @@ export default function ColorChooser(props: Props) {
       </button>
       {showPicker && (
         <div className="absolute z-10">
-          <SketchPicker color={color} onChange={(newColor) => onChange('textColor', newColor.hex)}/>
+          <SketchPicker
+            color={color}
+            onChangeComplete={(newColor) => onChange('textColor', newColor.hex)}
+          />
         </div>
       )}
     </div>

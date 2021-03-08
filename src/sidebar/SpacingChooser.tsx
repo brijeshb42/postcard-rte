@@ -9,7 +9,8 @@ export type LetterSpacing = number | undefined;
 export type SpacingChange = (key: 'lineHeight' | 'letterSpacing', value: LineHeight | LetterSpacing) => void;
 
 interface Props {
-  lineHeight: LineHeight;
+  disabled: boolean;
+  lineHeight?: LineHeight;
   letterSpacing: LetterSpacing;
   onChange: SpacingChange;
 }
@@ -25,6 +26,7 @@ export default function SpacingChooser(props: Props) {
   return (
     <div className="flex mt-2.5 w-full border boder-blueGray-200 rounded">
       <Select
+        isDisabled={props.disabled}
         aria-label="Select line height"
         className="w-1/2 rselect rselect__font-weight"
         classNamePrefix="rselect"
@@ -57,10 +59,11 @@ export default function SpacingChooser(props: Props) {
             </defs>
           </svg>
           <input
+            disabled={props.disabled}
             aria-label="Letter Spacing"
             placeholder="..."
             type="number"
-            className="block w-full h-full outline-none text-center text-xs focus:border focus:border-modo"
+            className="block w-full h-full outline-none text-center text-xs focus:border focus:border-modo disabled:opacity-50"
             value={props.letterSpacing || ''}
             step="0.1"
             onChange={ev => {

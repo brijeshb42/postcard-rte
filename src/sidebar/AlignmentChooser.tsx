@@ -45,7 +45,8 @@ const ALIGNMENT_OPTIONS: {label: React.ReactNode, value: Alignment}[] = [{
 }];
 
 interface Props {
-  alignment: Alignment;
+  disabled: boolean;
+  alignment?: Alignment;
   onChange(value: Alignment): void;
 }
 
@@ -61,8 +62,9 @@ export default function AlignmentChooser(props: Props) {
             role="radio"
             aria-checked={selected}
             key={item.value}
-            className={`w-1/4 py-2 flex justify-center ${extraClass}`}
+            className={`w-1/4 py-2 flex justify-center ${extraClass} disabled:opacity-50`}
             aria-label={`Alignment ${item.value}`}
+            disabled={props.disabled}
             onClick={() => props.onChange(item.value)}
           >
             {item.label}

@@ -1,10 +1,12 @@
 import WebFont from 'webfontloader';
 
+import { IOptionType } from './sidebar/customSelect';
+
 const FONT_CACHE: {[key: string]: boolean} = {};
 const FONT_VARIANT_CACHE: {[key: string]: boolean} = {};
 
 export function loadFont(font: string) {
-  if (FONT_CACHE[font]) {
+  if (!font || FONT_CACHE[font]) {
     return;
   }
 
@@ -20,7 +22,7 @@ export function loadFont(font: string) {
 }
 
 export function loadFontWithVariants(font: string, variants: string[]) {
-  if (FONT_VARIANT_CACHE[font]) {
+  if (!font || FONT_VARIANT_CACHE[font]) {
     return;
   }
 

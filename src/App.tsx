@@ -1,29 +1,21 @@
 import * as React from 'react'
 import { useParams, useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { SelectionChangeHandler } from 'quill/core';
 
 import PlainEditor from './plaineditor';
+import RichTextEditor, { IEditorProxy } from './rte/RichTextEditor';
 import SideBar, { ISidebarOptions } from './sidebar/SideBar';
 import { saveText as saveTextApi, getText as getTextApi } from './api';
 
 import './App.css'
 
-function getDefaultOptions(): ISidebarOptions {
-  return {
-    fontFamily: 'Inter',
-    fontSize: 16,
-    fontWeight: '400',
-    textColor: '#000000',
-    lineHeight: '125',
-    letterSpacing: undefined,
-    align: 'left',
-  };
-}
-
 function App() {
-  const [opts, setOpts] = React.useState(getDefaultOptions());
+  const [opts, setOpts] = React.useState<ISidebarOptions>({});
   const [text, setText] = React.useState('');
   const [isSaving, setSaving] = React.useState(false);
+  const [isSidebarDisabled, setSidebarDisabled] = React.useState(true);
+  const editor = React.useRef<IEditorProxy>();
 
   const isMacRef = React.useRef<boolean | null>(null);
   const params = useParams<{id: string | undefined}>();
@@ -31,19 +23,26 @@ function App() {
   const { id } = params;
 
   function setOption(key: keyof ISidebarOptions, newValue: any) {
-    setOpts(oldOpts => {
-      // reset weight when font changes as it might not support
-      // that particular weight.
-      const resetWeight = key === 'fontFamily';
-      const extraObj = resetWeight ? { 'fontWeight': '400' } : {};
-
-      return {
-        ...oldOpts,
-        ...extraObj,
+    if (editor.current) {
+      editor.current.setFormat(key, newValue);
+      setOpts(opts => ({
+        ...opts,
         [key]: newValue,
-      };
-    });
+      }));
+    }
   }
+
+  const onSelChange: SelectionChangeHandler = React.useCallback((sel) => {
+    if (sel === null) {
+      return;
+    }
+    if (sel.length === 0) {
+      setSidebarDisabled(true);
+    } else {
+      setSidebarDisabled(false);
+      setOpts(editor.current!.getFormat(sel) as ISidebarOptions);
+    }
+  }, []);
 
   function saveText() {
     if (!text) {
@@ -79,18 +78,12 @@ function App() {
     if (!id) {
       if (text) {
         setText('');
-        setOpts(getDefaultOptions());
       }
       return;
     }
 
     getTextApi(id).then(resp => {
       setText(resp.text);
-      let opts = getDefaultOptions();
-      try {
-        opts = JSON.parse(resp.config);
-      } catch (ex) {}
-      setOpts(opts);
     }).catch(e => {
       const errCode = Number.parseInt(e.message);
       if (!Number.isNaN(errCode)) {
@@ -128,14 +121,16 @@ function App() {
   return (
     <div className="flex flex-col-reverse md:flex-row h-screen bg-gray-200">
       <div className="max-w-2xl mx-auto w-full my-8 p-7 overflow-auto font-inter bg-white text-lg">
-        <PlainEditor
-          options={opts}
-          text={text}
-          onChange={setText}
+        <RichTextEditor
+          onCreate={ed => {
+            editor.current = ed;
+          }}
+          onSelectionChange={onSelChange}
         />
       </div>
       <aside className="bg-white p-4" style={{width: 300}}>
         <SideBar
+          disabled={isSidebarDisabled}
           options={opts}
           setOption={setOption}
           isSaving={isSaving}

@@ -2,6 +2,10 @@
   @apply border border-blueGray-200 shadow-none !important;
 }
 
+.rselect__control--is-disabled {
+  @apply opacity-50 bg-transparent !important;
+}
+
 .rselect__control--is-focused {
   font-size: 13px !important;
   @apply border-2 border-modo !important;

@@ -1,0 +1,27 @@
+.rte.ql-container {
+  font-size: 18px;
+  @apply font-inter font-normal;
+}
+
+.ql-container p {
+  @apply my-2;
+}
+
+.rte .ql-editor {
+  @apply p-0;
+}
+
+.ql-editor.ql-blank::before {
+  @apply mt-2 left-0 not-italic text-gray-400;
+}
+
+.toolbar::before {
+  content: ' ';
+  bottom: -8px;
+  left: calc(50% - 4px);
+  @apply absolute border-4 border-gray-700;
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+}
+

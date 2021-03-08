@@ -5,8 +5,8 @@ import { OptionProps, SingleValueProps, MenuProps, InputProps, CommonProps } fro
 import { loadFont } from '../fontStore';
 
 export interface IOptionType {
-  label: string;
-  value: string;
+  label: string | undefined;
+  value: string | undefined;
 }
 
 function cleanCommonProps(props: any): any {

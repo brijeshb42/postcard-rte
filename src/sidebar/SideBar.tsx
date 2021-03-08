@@ -11,24 +11,25 @@ import ColorChooser from './ColorChooser';
 import './SideBar.css';
 
 export interface ISidebarOptions {
-  fontFamily: string;
-  fontSize: number;
-  fontWeight: FontWeight;
-  textColor: string;
-  lineHeight: LineHeight;
-  letterSpacing: LetterSpacing;
-  align: Alignment;
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: FontWeight;
+  textColor?: string;
+  lineHeight?: LineHeight;
+  letterSpacing?: LetterSpacing;
+  align?: Alignment;
 } 
 
 export interface ISidebarProps {
   options: ISidebarOptions;
+  disabled: boolean;
   setOption(key: keyof ISidebarOptions, value: any): void;
   isSaving: boolean;
   onSave(): void;
 }
 
 export default function SideBar(props: ISidebarProps) {
-  const { options, setOption, isSaving, onSave } = props;
+  const { options, setOption, isSaving, onSave, disabled } = props;
 
   function onFontChange(opt: IOptionType | null) {
     if (!opt) {
@@ -46,20 +47,24 @@ export default function SideBar(props: ISidebarProps) {
     <div className="font-firasans">
       <p className="block text-xs text-gray-500 uppercase">Text</p>
       <FontChooser
+        disabled={disabled}
         selected={options.fontFamily}
         onChange={onFontChange}
       />
       <FontSizeChooser
+        disabled={disabled}
         fontFamily={options.fontFamily}
         weight={options.fontWeight}
         size={options.fontSize}
         onChange={onFontDimensionChange}
       />
       <ColorChooser
+        disabled={disabled}
         color={options.textColor}
         onChange={setOption}
       />
       <SpacingChooser
+        disabled={disabled}
         lineHeight={options.lineHeight}
         letterSpacing={options.letterSpacing}
         onChange={(key, value) => {
@@ -67,6 +72,7 @@ export default function SideBar(props: ISidebarProps) {
         }}
       />
       <AlignmentChooser
+        disabled={!disabled}
         alignment={options.align}
         onChange={(newVal) =>
           setOption('align', newVal === options.align ? undefined : newVal)

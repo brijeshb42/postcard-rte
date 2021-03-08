@@ -24,7 +24,7 @@ interface IQueryRespose {
   },
 }
 
-const FONT_OPTIONS: OptionsType<IOptionType> = INITIAL_FONTS.map(font => ({
+const FONT_OPTIONS: IOptionType[] = INITIAL_FONTS.map(font => ({
   label: font,
   value: font,
 }));
@@ -41,13 +41,26 @@ function loadFonts(input: string, callback: Function) {
 }
 const debouncedFn = debounce(loadFonts, 300);
 
-export default function FontChooser({ selected, onChange }: { selected: string, onChange: (option: IOptionType | null, action: any) => void }) {
-  const value = React.useMemo(() => ({
-    label: selected,
-    value: selected,
-  }), [selected]);
+interface Props {
+  selected?: string,
+  disabled: boolean;
+  onChange: (option: IOptionType | null, action: any) => void;
+}
+
+export default function FontChooser({ selected, disabled, onChange }: Props) {
+  const value = React.useMemo(() => {
+    if (!selected) {
+      return null;
+    }
+
+    return {
+      label: selected,
+      value: selected,
+    };
+  }, [selected]);
+
   const options = React.useMemo(() => {
-    if (FONT_OPTIONS.find(item => item.value === selected)) {
+    if (!selected || FONT_OPTIONS.find(item => item.value === selected)) {
       return FONT_OPTIONS;
     }
 
@@ -77,6 +90,7 @@ export default function FontChooser({ selected, onChange }: { selected: string, 
         components={components}
         value={value}
         onChange={onChange}
+        isDisabled={disabled}
       />
     </div>
   );
