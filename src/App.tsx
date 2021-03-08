@@ -12,7 +12,7 @@ import './App.css'
 
 function App() {
   const [opts, setOpts] = React.useState<ISidebarOptions>({});
-  const [text, setText] = React.useState('');
+  const [content, setContent] = React.useState<any>({ ops: [] });
   const [isSaving, setSaving] = React.useState(false);
   const [isSidebarDisabled, setSidebarDisabled] = React.useState(true);
   const editor = React.useRef<IEditorProxy>();
@@ -50,7 +50,9 @@ function App() {
   }, []);
 
   function saveText() {
-    if (!text) {
+    const content = editor.current?.getContents();
+
+    if (!content) {
       toast.info('Please add some text to save.');
       return;
     }
@@ -58,8 +60,7 @@ function App() {
     setSaving(true);
 
     const data = {
-      text,
-      config: JSON.stringify(opts),
+      text: JSON.stringify(content),
     };
 
     saveTextApi(data, id)
@@ -81,19 +82,21 @@ function App() {
   React.useEffect(() => {
     // fetch new data when id changes
     if (!id) {
-      if (text) {
-        setText('');
-      }
       return;
     }
 
     getTextApi(id).then(resp => {
-      setText(resp.text);
+      try {
+        setContent(JSON.parse(resp.text));
+      } catch (ex) {
+        setContent({ ops: [] });
+      }
     }).catch(e => {
       const errCode = Number.parseInt(e.message);
       if (!Number.isNaN(errCode)) {
         history.replace('/');
         toast.error('This text does not exist.');
+        setContent({ ops: [] });
         return;
       }
 
@@ -121,12 +124,13 @@ function App() {
     return () => {
       window.removeEventListener('keydown', handler);
     };
-  }, [text, opts, id]);
+  }, [id]);
 
   return (
     <div className="flex flex-col-reverse md:flex-row h-screen bg-gray-200">
       <div className="max-w-2xl mx-auto w-full my-8 p-7 overflow-auto font-inter bg-white text-lg">
         <RichTextEditor
+          content={content}
           onCreate={ed => {
             editor.current = ed;
           }}

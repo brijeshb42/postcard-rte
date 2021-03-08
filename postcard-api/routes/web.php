@@ -54,7 +54,7 @@ $router->get('/api/text/{id:\d+}', function ($id) {
 
 $router->post('/api/text/', function (Request $request) {
   $text = $request->json()->get('text');
-  $config = $request->json()->get('config');
+  $config = $request->json()->get('config', '{}');
   $id = DB::table('texts')->insertGetId([
     'text'    => $text,
     'config'  => $config,
@@ -64,7 +64,7 @@ $router->post('/api/text/', function (Request $request) {
 
 $router->patch('/api/text/{id:\d+}', function (Request $request, $id) {
   $text = $request->json()->get('text');
-  $config = $request->json()->get('config');
+  $config = $request->json()->get('config', '{}');
   $res = DB::table('texts')->where('id', $id)->update([
     'text'    => $text,
     'config'  => $config,

@@ -117,6 +117,7 @@ Quill.register(Italic);
 Quill.register(AlignClass);
 
 interface Props {
+  content: any;
   onTextChange?(): void;
   onSelectionChange?: SelectionChangeHandler;
   onCreate?(editor: IEditorProxy): any;
@@ -126,6 +127,7 @@ export interface IEditorProxy {
   setFormat(key: keyof ISidebarOptions, value: any): void;
   getFormat(range?: RangeStatic): {[key: string]: any};
   setAlign(key: 'align', value: Alignment): void;
+  getContents(): any;
 }
 
 interface ILinkProps {
@@ -259,7 +261,14 @@ export default function RichTextEditor(props: Props) {
         },
         setAlign(key: 'align', value: Alignment) {
           quill!.format('align', value);
-        }
+        },
+        getContents() {
+          const len = quill!.getLength();
+          if (len <= 1) {
+            return null;
+          }
+          return quill!.getContents();
+        },
       };
       props.onCreate(editor);
     }
@@ -274,6 +283,15 @@ export default function RichTextEditor(props: Props) {
       }
     };
   }, []);
+
+  React.useEffect(() => {
+    const ed = q.current;
+
+    if (!ed) {
+      return;
+    }
+    ed.setContents(props.content);
+  }, [props.content]);
 
   React.useEffect(() => {
     const quill = q.current;
@@ -307,6 +325,7 @@ export default function RichTextEditor(props: Props) {
       quill.off('selection-change', handler);
     };
   }, [props.onSelectionChange]);
+
   const style = !!toolbarPos ? {
     left: toolbarPos.x,
     top: toolbarPos.y
@@ -319,7 +338,11 @@ export default function RichTextEditor(props: Props) {
     <div className="relative">
       <div ref={node} className="rte" />
       <Portal>
-        <div ref={toolbar} className={`toolbar bg-gray-700 absolute p-2 rounded ${!!toolbarPos ? 'visible' : 'invisible'}`} style={style}>
+        <div
+          ref={toolbar}
+          className={`toolbar bg-gray-700 absolute p-2 rounded ${!!toolbarPos ? 'visible' : 'invisible'}`}
+          style={style}
+        >
           {!!toolbarPos ? (
             <LinkInput
               value={link}
