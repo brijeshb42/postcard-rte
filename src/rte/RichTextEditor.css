@@ -11,6 +11,10 @@
   @apply p-0;
 }
 
+.ql-editor a {
+  @apply text-blue-600 underline;
+}
+
 .ql-editor.ql-blank::before {
   @apply mt-2 left-0 not-italic text-gray-400;
 }

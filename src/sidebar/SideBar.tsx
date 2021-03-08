@@ -48,14 +48,14 @@ export default function SideBar(props: ISidebarProps) {
       <p className="block text-xs text-gray-500 uppercase">Text</p>
       <FontChooser
         disabled={disabled}
-        selected={options.fontFamily}
+        selected={options.fontFamily || 'Inter'}
         onChange={onFontChange}
       />
       <FontSizeChooser
         disabled={disabled}
-        fontFamily={options.fontFamily}
-        weight={options.fontWeight}
-        size={options.fontSize}
+        fontFamily={options.fontFamily || 'Inter'}
+        weight={options.fontWeight || '400'}
+        size={options.fontSize || 18}
         onChange={onFontDimensionChange}
       />
       <ColorChooser
@@ -72,8 +72,7 @@ export default function SideBar(props: ISidebarProps) {
         }}
       />
       <AlignmentChooser
-        disabled={!disabled}
-        alignment={options.align}
+        alignment={options.align || 'left'}
         onChange={(newVal) =>
           setOption('align', newVal === options.align ? undefined : newVal)
         }

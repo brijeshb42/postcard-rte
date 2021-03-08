@@ -45,7 +45,7 @@ const ALIGNMENT_OPTIONS: {label: React.ReactNode, value: Alignment}[] = [{
 }];
 
 interface Props {
-  disabled: boolean;
+  disabled?: boolean;
   alignment?: Alignment;
   onChange(value: Alignment): void;
 }

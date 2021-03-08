@@ -16,3 +16,8 @@ declare module 'quill/formats/italic' {
   class Italic extends Parchment.Inline {}
   export default Italic;
 }
+
+declare module 'quill/formats/align' {
+  import Parchment from 'parchment';
+  export class AlignClass extends Parchment.Attributor.Class {}
+}

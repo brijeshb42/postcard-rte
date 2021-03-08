@@ -24,7 +24,11 @@ function App() {
 
   function setOption(key: keyof ISidebarOptions, newValue: any) {
     if (editor.current) {
-      editor.current.setFormat(key, newValue);
+      if (key === 'align') {
+        editor.current.setAlign(key, newValue);
+      } else {
+        editor.current.setFormat(key, newValue);
+      }
       setOpts(opts => ({
         ...opts,
         [key]: newValue,
@@ -38,6 +42,7 @@ function App() {
     }
     if (sel.length === 0) {
       setSidebarDisabled(true);
+      setOpts(editor.current!.getFormat());
     } else {
       setSidebarDisabled(false);
       setOpts(editor.current!.getFormat(sel) as ISidebarOptions);

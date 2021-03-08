@@ -5,6 +5,7 @@ import Quill, { SelectionChangeHandler, RangeStatic } from 'quill/core';
 import Link from 'quill/formats/link';
 import Bold from 'quill/formats/bold';
 import Italic from 'quill/formats/italic';
+import { AlignClass } from 'quill/formats/align';
 
 import { ISidebarOptions } from '../sidebar/SideBar';
 import { FontWeight } from '../sidebar/FontSizeChooser';
@@ -113,6 +114,7 @@ INLINE_STYLES.forEach(item => {
 Quill.register(Link);
 Quill.register(Bold);
 Quill.register(Italic);
+Quill.register(AlignClass);
 
 interface Props {
   onTextChange?(): void;
@@ -122,7 +124,8 @@ interface Props {
 
 export interface IEditorProxy {
   setFormat(key: keyof ISidebarOptions, value: any): void;
-  getFormat(range: RangeStatic): {[key: string]: any};
+  getFormat(range?: RangeStatic): {[key: string]: any};
+  setAlign(key: 'align', value: Alignment): void;
 }
 
 interface ILinkProps {
@@ -136,17 +139,21 @@ function LinkInput(props: ILinkProps) {
   const linkInput = React.useRef<HTMLInputElement>(null);
 
   function handleKeyDown(ev: React.KeyboardEvent<HTMLInputElement>) {
-    if (ev.keyCode !== 13) {
+    if (ev.keyCode !== 13 && ev.keyCode !== 27) {
       return;
     }
 
     ev.preventDefault();
 
-    if (!props.onLinkEnter) {
-      return;
+    if (ev.keyCode === 13) {
+
+      if (!props.onLinkEnter) {
+        return;
+      }
+
+      props.onLinkEnter((ev.target as HTMLInputElement).value);
     }
 
-    props.onLinkEnter((ev.target as HTMLInputElement).value);
     setShowInput(false);
   }
 
@@ -156,11 +163,15 @@ function LinkInput(props: ILinkProps) {
     }
     if (showInput && linkInput.current) {
       linkInput.current.focus();
+
+      if (props.value) {
+        linkInput.current.value = props.value;
+      }
     }
   }, [showInput]);
 
   React.useEffect(() => {
-    if (props.value) {
+    if (props.value && linkInput.current) {
       linkInput.current!.value = props.value;
     }
   }, [props.value]);
@@ -194,28 +205,37 @@ function Portal({ children }: { children: React.ReactNode }) {
 
 export default function RichTextEditor(props: Props) {
   const [toolbarPos, setToolbarPos] = React.useState<{x: number, y: number} | null>(null);
+  const [link, setLink] = React.useState('');
   const node = React.useRef<HTMLDivElement>(null);
   const toolbar = React.useRef<HTMLDivElement>(null);
-  const lastBound = React.useRef<RangeStatic>();
   const q = React.useRef<Quill>();
+  const lastRange = React.useRef<RangeStatic>();
 
   function onInputToggle(newVal: boolean) {
     if (!toolbarPos || !q.current) {
       return;
     }
 
-    const sel = q.current.getSelection() || lastBound.current;
+    const sel = q.current.getSelection() || lastRange.current;
     if (!sel) {
       return;
     }
 
-    lastBound.current = undefined;
     const bounds = q.current.getBounds(sel!.index, sel.length);
     const rect = node.current!.getBoundingClientRect();
     setToolbarPos({
       x: rect.left + bounds.left + bounds.width / 2 - toolbar.current!.offsetWidth / 2,
-      y: rect.top - bounds.bottom - 10,
+      y: rect.top + bounds.top - bounds.height / 2 - toolbar.current!.offsetHeight / 2 - 20,
     });
+  }
+
+  function onLink(link: string) {
+    const quill = q.current;
+    if (!quill) {
+      return;
+    }
+    quill.format('link', link);
+    setLink(link);
   }
 
   React.useEffect(() => {
@@ -234,8 +254,11 @@ export default function RichTextEditor(props: Props) {
           }
           quill!.format(key, value);
         },
-        getFormat(range: RangeStatic) {
+        getFormat(range?: RangeStatic) {
           return quill!.getFormat(range);
+        },
+        setAlign(key: 'align', value: Alignment) {
+          quill!.format('align', value);
         }
       };
       props.onCreate(editor);
@@ -259,21 +282,22 @@ export default function RichTextEditor(props: Props) {
     }
 
     const handler: SelectionChangeHandler = (range, oldRange, source) => {
-      props.onSelectionChange!(range, oldRange, source);
-      if (range) {
-        lastBound.current = range;
-      }
+      try {props.onSelectionChange!(range, oldRange, source);} catch (ex) {}
 
       if (range && range.length === 0) {
         setToolbarPos(null);
+        lastRange.current = undefined;
       } else if (range && range.length) {
         const bounds = quill.getBounds(range.index, range.length);
         const rect = node.current!.getBoundingClientRect();
 
+        const format = quill.getFormat(range);
         setToolbarPos({
-          x: bounds.left + bounds.width / 2 - toolbar.current!.offsetWidth / 2,
-          y: rect.top - bounds.bottom - 10,
+          x: rect.left + bounds.left + bounds.width / 2 - toolbar.current!.offsetWidth / 2,
+          y: rect.top + bounds.top - bounds.height / 2 - toolbar.current!.offsetHeight / 2 - 20,
         });
+        lastRange.current = range;
+        setLink(format.link || '');
       }
     };
 
@@ -296,7 +320,13 @@ export default function RichTextEditor(props: Props) {
       <div ref={node} className="rte" />
       <Portal>
         <div ref={toolbar} className={`toolbar bg-gray-700 absolute p-2 rounded ${!!toolbarPos ? 'visible' : 'invisible'}`} style={style}>
-          {!!toolbarPos ? <LinkInput onInputToggle={onInputToggle} /> : null}
+          {!!toolbarPos ? (
+            <LinkInput
+              value={link}
+              onInputToggle={onInputToggle}
+              onLinkEnter={onLink}
+            />
+          ): null}
         </div>
       </Portal>
     </div>
