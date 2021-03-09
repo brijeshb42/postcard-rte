@@ -9,6 +9,7 @@ const config: UserConfigExport = {
   base,
   build: {
     outDir: isDev ? 'dist' : 'postcard-api/public/dist',
+    sourcemap: true,
   },
 };
 

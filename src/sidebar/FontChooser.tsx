@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Select, { OptionsType, OptionProps, SingleValueProps, SelectComponentsConfig } from 'react-select';
 import AsyncSelect from 'react-select/async';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 
 import { queryFont } from '../api';
 import {

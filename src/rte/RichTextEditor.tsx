@@ -291,6 +291,7 @@ export default function RichTextEditor(props: Props) {
       return;
     }
     ed.setContents(props.content);
+    ed.focus();
   }, [props.content]);
 
   React.useEffect(() => {

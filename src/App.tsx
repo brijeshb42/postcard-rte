@@ -4,11 +4,18 @@ import { toast } from 'react-toastify';
 import { SelectionChangeHandler } from 'quill/core';
 
 import PlainEditor from './plaineditor';
-import RichTextEditor, { IEditorProxy } from './rte/RichTextEditor';
-import SideBar, { ISidebarOptions } from './sidebar/SideBar';
+import { IEditorProxy } from './rte/RichTextEditor';
+import { ISidebarOptions } from './sidebar/SideBar';
 import { saveText as saveTextApi, getText as getTextApi } from './api';
 
 import './App.css'
+
+const RichTextEditor = React.lazy(() => import('./rte/RichTextEditor'));
+const SideBar = React.lazy(() => import('./sidebar/SideBar'));
+
+function Loading({ text }: { text: string }) {
+  return <p>Loading {text}...</p>;
+}
 
 function App() {
   const [opts, setOpts] = React.useState<ISidebarOptions>({});
@@ -129,22 +136,26 @@ function App() {
   return (
     <div className="flex flex-col-reverse md:flex-row h-screen bg-gray-200">
       <div className="max-w-2xl mx-auto w-full my-8 p-7 overflow-auto font-inter bg-white text-lg">
-        <RichTextEditor
-          content={content}
-          onCreate={ed => {
-            editor.current = ed;
-          }}
-          onSelectionChange={onSelChange}
-        />
+        <React.Suspense fallback={<Loading text="editor" />}>
+          <RichTextEditor
+            content={content}
+            onCreate={(ed: IEditorProxy) => {
+              editor.current = ed;
+            }}
+            onSelectionChange={onSelChange}
+          />
+        </React.Suspense>
       </div>
       <aside className="bg-white p-4" style={{width: 300}}>
-        <SideBar
-          disabled={isSidebarDisabled}
-          options={opts}
-          setOption={setOption}
-          isSaving={isSaving}
-          onSave={saveText}
-        />
+        <React.Suspense fallback={<Loading text="sidebar" />}>
+          <SideBar
+            disabled={isSidebarDisabled}
+            options={opts}
+            setOption={setOption}
+            isSaving={isSaving}
+            onSave={saveText}
+          />
+        </React.Suspense>
       </aside>
     </div>
   )
